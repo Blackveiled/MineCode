@@ -5,6 +5,8 @@
  */
 package com.blackveiled.minecode.compiler;
 
+import java.io.File;
+
 /**
  *
  * @author Blackveiled
@@ -20,7 +22,7 @@ public class MineCodeCompiler {
      * @param in UTF-16 encoded char array
      */
     public MineCodeCompiler(char[] in) throws MineCodeCompileException {
-
+        File file;
         // MineCode Information:
         // 
         // - Whitespace will be ignored by the compiler, the only instance where whitespace
@@ -114,7 +116,42 @@ public class MineCodeCompiler {
                         i++;
                         break;
                     }
+                    // Do nothing.  Ignore lines.
+                    i++;
                 }
+            }
+            // character checking if the code start has initiated.
+            // Syntax: mcode start {
+            if (in[i] == '\u006D') {
+                if (in[i + 1] == '\u0063') {
+                    if (in[i + 2] == '\u006F') {
+                        if (in[i + 3] == '\u0064') {
+                            if (in[i + 4] == '\u0065') {
+                                if (in[i + 5] == '\u0020') {
+                                    if (in[i + 6] == '\u0073') {
+                                        if (in[i + 7] == '\u0074') {
+                                            if (in[i + 8] == '\u0061') {
+                                                if (in[i + 9] == '\u0072') {
+                                                    if (in[i + 10] == '\u0074') {
+                                                        if (in[i + 11] == '\u0020') {
+                                                            if (in[i + 12] == '\u007B') {
+                                                                scriptOpen = true;
+                                                                i = i + 12;
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                break noErrorsFound;
+                // End of script initiator.
             }
 
         }
