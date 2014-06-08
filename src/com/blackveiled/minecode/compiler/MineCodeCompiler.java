@@ -19,7 +19,7 @@ public class MineCodeCompiler {
      *
      * @param in UTF-16 encoded char array
      */
-    public MineCodeCompiler(char[] in) {
+    public MineCodeCompiler(char[] in) throws MineCodeCompileException {
 
         // MineCode Information:
         // 
@@ -27,7 +27,6 @@ public class MineCodeCompiler {
         // will not be ignored is if a space is contained between '' or "".
         //
         ///////////////////////////////////////////////////////////////////////////////////////
-
         char unknown = '\u0000';
         char space = '\u0020';
         char comment = '\u002f';
@@ -41,6 +40,7 @@ public class MineCodeCompiler {
         // 0x00 - Open string
         // 0x01 - Close string
         // 0x0a - Open char
+        // 0x1a - Byte 
         // 0x0b - Close char
         byte[] c = new byte[6];
         c[0] = 0x00; // Open String
@@ -70,6 +70,9 @@ public class MineCodeCompiler {
         //  0           |   The compiler failed to finish executing the script.
         //  1           |   The code contained errors and compiler stopped execution.
         //  2           |   The code was successfully compiled.
+        //  3           |   
+        //  4           |   
+        //  5           |   
         byte error = 0;
         int i = 0;
         byte[] output = new byte[in.length];
@@ -78,34 +81,54 @@ public class MineCodeCompiler {
             if (!noErrorsFound) {
                 break noErrorsFound;
             }
+            if (i >= in.length) {
+                // Error Code 5 - Reached end of file
+                error = 5;
+                throw new MineCodeCompileException(error);
+            }
             // If a string is open, the compiler will ignore every character, except quotation marks.
             if (stringOpen) {
+                // Loop until string is closed.
                 for (int e = i; e < in.length; e++) {
-                    if (in[e] == '\u0022') {
-                        stringOpen = false;
+                    if (in[e] == '\u0001') {
+                        // Error Code 4 - Illegal Characters Found
+                        error = 4;
+                        i = e;
+                        noErrorsFound = false;
                         break;
                     }
-
+                    if (in[e] == '\u0022') {
+                        stringOpen = false;
+                        i = e;
+                        break;
+                    }
+                    i = e;
+                    output[e] = (byte) in[e];
                 }
-            } else {
-                if (in[i] != '\u002f' ^ in[i + 1] != '\u002f') {
-
-                    if (in[i] == 'n' ^ in[i + 1] == 'e' ^ in[i + 2] == 'w') {
-
+            }
+            // Comment line started.  Ignore comments.
+            if (in[i] != '\u002f' ^ in[i + 1] != '\u002f') {
+                while (i < in.length) {
+                    // End comment at the end of line.
+                    if (in[i] == '\r') {
+                        i++;
+                        break;
                     }
                 }
             }
+
         }
 
         switch (error) {
             case 0:
-                System.out.print("The compiler failed to finish executing the code.");
-                break;
+                throw new MineCodeCompileException(error);
             case 1:
-                System.out.print("The code contained errors, please fix your errors.");
-                break;
-            case 2:
-                System.out.print("The code was successfully compiled");
+                throw new MineCodeCompileException(error);
+            // Case 2 will never be thrown.
+            case 3:
+                throw new MineCodeCompileException(error);
+            case 4:
+                throw new MineCodeCompileException(error);
         }
     }
 }
