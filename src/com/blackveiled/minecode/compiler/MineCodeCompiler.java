@@ -5,19 +5,6 @@
  */
 package com.blackveiled.minecode.compiler;
 
-/*
-
-
- T - theorem 
- ⊥ - antitheorem
- ¬ - not (¬x) negation
- ^ - and
- ∨ - or
- ⇒ - equal to or greater than
- ⇐ - less than or equal to
-
-
- */
 /**
  *
  * @author Blackveiled
@@ -40,10 +27,7 @@ public class MineCodeCompiler {
         // will not be ignored is if a space is contained between '' or "".
         //
         ///////////////////////////////////////////////////////////////////////////////////////
-        // Syntax Information:
-        //----------------------------------------------------------------
-        // 
-        // Ignored characters: 
+
         char unknown = '\u0000';
         char space = '\u0020';
         char comment = '\u002f';
