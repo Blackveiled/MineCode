@@ -1,0 +1,5 @@
+## YAML Template.
+---
+name: MineCode
+version: 1_0_0R-1
+main: com.blackveiled.minecode.Main
